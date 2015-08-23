@@ -1,0 +1,25 @@
+{
+  "name": "client-node",
+  "version": "0.1.0",
+  "description": "StackHut Client library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StackHut/client-node.git"
+  },
+  "keywords": [
+    "stackhut"
+  ],
+  "author": "StackHut <client@stackhut.com> (http://www.stackhut.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/StackHut/client-node/issues"
+  },
+  "homepage": "https://github.com/StackHut/client-node#readme",
+  "dependencies": {
+    "request": "^2.61.0"
+  }
+}
