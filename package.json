@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/StackHut/client-node#readme",
   "dependencies": {
+    "harmony-reflect": "^1.4.0",
     "request": "^2.61.0"
   }
 }
