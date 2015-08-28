@@ -1,14 +1,14 @@
 # StackHut client-library for NodeJS/ES6
 
-This library lets you call a hosted StackHut service dynamically and asynchronously from your Node/ES6 code as if it were a local function.
+StackHut client library to call dev, local, and hosted StackHut services dynamically and asynchronously from your Node/ES6 code as if it were a local function.
 
 There are 3 main objects in the library,
 
 #### SHService
 
-This is the main library you create per service to communicate with it. It takes several parameters on construction, where those in square brackets are optional
+This is the main library you create per service to communicate with it. It takes several parameters on construction, where those in square brackets are optional:
 
-```
+```js
 let service = client.SHService(author, service_name, [service_version], [auth], [host])
 ```
 
@@ -16,12 +16,17 @@ let service = client.SHService(author, service_name, [service_version], [auth], 
 * service_name - The service name
 * version - The specific verion of the service (is `latest` if left blank)
 * auth - An `SHAuth` object used to authenticate requests for private services
-* host - URL for the StackHut API server, can be overrden to point to local servers during development, is `https://api.stackhut.com` if left blank
+* host - URL for the StackHut API server, can be set to point to local servers during development, is `https://api.stackhut.com` if left blank
 
+To make a remote call, just call the interface and method name on the service object:
+
+```js
+    let result = service.Interface.method(params, ...)
+```
 
 #### SHAuth
 
-An optional object used to authenticate requests to a service,
+An optional object used to authenticate requests to a service:
 
 ```
 let auth = client.SHAuth(user, [hash], [token])
@@ -47,24 +52,24 @@ The object has 3 parameters,
 
 Using the existing service called `demo-nodejs` by user `stackhut`, we create the main service object,
 
-```
+```js
 let client = require('stackhut-client')
-let s = client.SHService('stackhut', 'demo-nodejs')
+let s = client.SHService('stackhut', 'web-tools')
 
 ```
 
-From here we can call any functions on any interfaces exposed by the hosted `stackhut/demo-nodejs` service, as follows,
+From here we can call any functions on any interfaces exposed by the hosted `stackhut/demo-nodejs` service, as follows:
 
-```
-let result_p = s.Default.add(1,2)
+```js
+let result_p = s.Default.renderWebpage("www.stackhut.com", 1024, 768)
 ```
 
-The client library is promise-based, so `result_p` either resolves or rejects depending on the service call and parameters. We can code for this as you would any promise,
+The client library is promise-based, so `result_p` either resolves or rejects depending on the service call and parameters. We can code for this as you would any promise:
 
-```
+```js
 result_p
 .then(function(res) {
-    console.log(res)
+    console.log(`Page render at ${result}`)
 }).catch(function(err) {
     console.log(err)
 })
