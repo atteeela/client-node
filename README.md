@@ -21,7 +21,7 @@ let service = client.SHService(author, service_name, [service_version], [auth], 
 To make a remote call, just call the interface and method name on the service object:
 
 ```js
-    let result = service.Interface.method(params, ...)
+let result = service.Interface.method(params, ...)
 ```
 
 #### SHAuth
