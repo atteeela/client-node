@@ -80,11 +80,12 @@ class _SHService {
                     json: true
                 },
                 function (error, response, body) {
-                    // TODO - copy python client logic for now
-                    if (response.statusCode == 200 && 'result' in body) {
-                        resolve(body.result);
-                    } else if (response.statusCode != 200 && 'error' in body) {
-                        reject(new SHError(body.error.code, body.error.msg, body.error.data));
+                    // TODO - fix error logic when hosted platform sends correct HTTP status codes
+                    if (response.statusCode == 200 && 'response' in body && 'result' in body['response']) {
+                        resolve(body.response.result);
+                    } else if ('response' in body && 'error' in body['response'] {
+                        let error = body.response.error;
+                        reject(new SHError(error.code, error.msg, error.data));
                     } else {
                         reject(new SHError(-32000, `HTTP Response code ${response.statusCode}`, { error: error }));
                     }
