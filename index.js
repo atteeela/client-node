@@ -16,6 +16,7 @@
 let request = require('request');
 let reflect = require('harmony-reflect');
 let uuid = require('node-uuid');
+let url = require('url');
 
 class SHError {
     constructor(code, msg, data) {
