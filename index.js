@@ -49,7 +49,7 @@ class _SHService {
     constructor(author, name, version, auth, host) {
         this.version = typeof version !== 'undefined' ? version : "latest";
         this.auth = typeof auth !== 'undefined' ? auth : null;
-        this.host = typeof host !== 'undefined' ? host : 'https://api.stackhut.com/run';
+        this.host = typeof host !== 'undefined' ? host : 'https://api.stackhut.com';
         this.service_short_name = `${author}/${name}:${this.version}`
     };
 
@@ -70,11 +70,12 @@ class _SHService {
             msg['auth'] = this.auth.msg();
         }
 
-        console.log(msg);
+        // console.log(msg);
+        let run_endpoint = url.resolve(this.host, '/run');
         // make request and convert result into a promise
         return new Promise(function (resolve, reject) {
             request({
-                    url: url,
+                    url: run_endpoint,
                     method: 'POST',
                     body: msg,
                     json: true
@@ -83,9 +84,9 @@ class _SHService {
                     // TODO - fix error logic when hosted platform sends correct HTTP status codes
                     if (response.statusCode == 200 && 'response' in body && 'result' in body['response']) {
                         resolve(body.response.result);
-                    } else if ('response' in body && 'error' in body['response'] {
-                        let error = body.response.error;
-                        reject(new SHError(error.code, error.msg, error.data));
+                    } else if ('response' in body && 'error' in body['response']) {
+                        let r_error = body.response.error;
+                        reject(new SHError(r_error.code, r_error.message, r_error.data));
                     } else {
                         reject(new SHError(-32000, `HTTP Response code ${response.statusCode}`, { error: error }));
                     }
@@ -102,9 +103,9 @@ module.exports.SHService = function(author, name, version, auth, host) {
             return new Proxy({}, {
                 get: function(_, method_name) {
                     return function(...params) {
-                        console.log(target)
-                        console.log(`calling ${iface_name}.${method_name}(${params})`)
-                        target._make_call(iface_name, method_name, params)
+                        // console.log(target);
+                        // console.log(`calling ${iface_name}.${method_name}(${params})`);
+                        return target._make_call(iface_name, method_name, params)
                     }
                 }
             });
