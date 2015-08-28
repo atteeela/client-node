@@ -14,18 +14,18 @@
 // limitations under the License.
 
 let request = require('request');
-let url = "https://api.stackhut.com/run";
+let reflect = require('harmony-reflect');
+let uuid = require('node-uuid');
 
-module.exports.req_id = null;
-module.exports.root_dir = __dirname;
-
-module.exports.SHError = class {
+class SHError {
     constructor(code, msg, data) {
         this.code = code;
         this.msg = msg;
         this.data = typeof data !== 'undefined' ? data : {};
     };
-};
+}
+
+module.exports.SHError = SHError;
 
 module.exports.SHAuth = class {
     constructor(user, hash, token) {
@@ -44,8 +44,8 @@ module.exports.SHAuth = class {
 };
 
 
-
-module.exports.SHService = class {
+// Internal Service object, is wrapper with a proxy
+class _SHService {
     constructor(author, name, version, auth, host) {
         this.version = typeof version !== 'undefined' ? version : "latest";
         this.auth = typeof auth !== 'undefined' ? auth : null;
@@ -53,23 +53,25 @@ module.exports.SHService = class {
         this.service_short_name = `${author}/${name}:${this.version}`
     };
 
-    _make_call(iface, method, ...params) {
+    _make_call(iface, method, params) {
         // create the SH json-rpc obj
         let msg = {
             service: this.service_short_name,
-            id: new_id(),
+            id: uuid.v4(),
             request: {
                 method: `${iface}.${method}`,
                 params: params,
                 jsonrpc: '2.0',
-                id: id_val
+                id: uuid.v4()
             }
         };
+        // add optional auth
+        if (this.auth !== null) {
+            msg['auth'] = this.auth.msg();
+        }
 
-        if auth:
-            msg['auth'] = this.auth.msg()
-
-
+        console.log(msg);
+        // make request and convert result into a promise
         return new Promise(function (resolve, reject) {
             request({
                     url: url,
@@ -78,22 +80,35 @@ module.exports.SHService = class {
                     json: true
                 },
                 function (error, response, body) {
-                    if (!error && response.statusCode >= 200 && response.statusCode < 300) {
-                        if ('result' in body) {
-                            resolve(body['result']);
-                        } else {
-                            reject(body['error'])
-                        }
+                    // TODO - copy python client logic for now
+                    if (response.statusCode == 200 && 'result' in body) {
+                        resolve(body.result);
+                    } else if (response.statusCode != 200 && 'error' in body) {
+                        reject(new SHError(body.error.code, body.error.msg, body.error.data));
                     } else {
-                        reject('error: ' + response.statusCode + error)
+                        reject(new SHError(-32000, `HTTP Response code ${response.statusCode}`, { error: error }));
                     }
                 }
             )
         })
     };
-};
+}
 
-// stackhut library functions
-module.exports.get_stackhut_user = function() {
-    return make_call('get_stackhut_user')
+module.exports.SHService = function(author, name, version, auth, host) {
+    // traps
+    let handler = {
+        get: function(target, iface_name){
+            return new Proxy({}, {
+                get: function(_, method_name) {
+                    return function(...params) {
+                        console.log(target)
+                        console.log(`calling ${iface_name}.${method_name}(${params})`)
+                        target._make_call(iface_name, method_name, params)
+                    }
+                }
+            });
+        }
+    };
+    let shAuth = new _SHService(author, name, version, auth, host);
+    return new Proxy(shAuth, handler)
 };

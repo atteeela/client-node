@@ -21,6 +21,10 @@
   "homepage": "https://github.com/StackHut/client-node#readme",
   "dependencies": {
     "harmony-reflect": "^1.4.0",
+    "node-uuid": "^1.4.3",
     "request": "^2.61.0"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0"
   }
 }
