@@ -1,4 +1,4 @@
-# StackHut client-library for NodeJS/ES6
+# StackHut NodeJS/ES6 Client Library
 
 StackHut client library to call dev, local, and hosted StackHut services dynamically and asynchronously from your Node/ES6 code as if it were a local function.
 
