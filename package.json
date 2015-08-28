@@ -1,5 +1,5 @@
 {
-  "name": "client-node",
+  "name": "stackhut-client",
   "version": "0.1.0",
   "description": "StackHut Client library",
   "main": "index.js",
