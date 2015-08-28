@@ -19,9 +19,9 @@ let uuid = require('node-uuid');
 let url = require('url');
 
 class SHError {
-    constructor(code, msg, data) {
+    constructor(code, message, data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = typeof data !== 'undefined' ? data : {};
     };
 }
