@@ -13,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let request = require('request');
-let reflect = require('harmony-reflect');
-let uuid = require('node-uuid');
-let url = require('url');
+import request from 'request';
+import reflect from 'harmony-reflect';
+import uuid from 'node-uuid';
+import url from 'url';
 
 class SHError {
     constructor(code, message, data) {
